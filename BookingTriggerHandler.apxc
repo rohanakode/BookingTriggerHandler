@@ -1,0 +1,48 @@
+public class BookingTriggerHandler {
+
+    // Booking Payment Record Creation
+    public static void createPaymentRecords(List<Booking__c> newBookings) {
+        List<Booking_Payment__c> paymentsToInsert = new List<Booking_Payment__c>();
+
+        for (Booking__c booking : newBookings) {
+            Booking_Payment__c payment = new Booking_Payment__c();
+            payment.Booking__c = booking.Id;
+            payment.Payment_Status__c = 'Pending'; // Default status
+
+            // Required field
+            payment.Payment_Date__c = Date.today();
+
+            paymentsToInsert.add(payment);
+        }
+
+        if (!paymentsToInsert.isEmpty()) {
+            insert paymentsToInsert;
+        }
+    }
+
+    // BookingGuests Records Creation
+    public static void createBookingGuests(List<Booking__c> bookings) {
+        List<BookingGuest__c> guestsToInsert = new List<BookingGuest__c>();
+
+        for (Booking__c booking : bookings) {
+            Integer count = (Integer)booking.Number_of_Travelers__c;
+
+            for (Integer i = 1; i <= count; i++) {
+                BookingGuest__c guest = new BookingGuest__c();
+                guest.Booking__c = booking.Id;
+                guest.Name = 'Guest ' + i;
+
+                // Required fields
+                guest.Age__c = 30; // You can replace this with logic later
+                guest.Country__c = 'Philippines'; // Replace as needed
+                guest.Date_Of_Birth__c = Date.today().addYears(-30); // Default DOB for testing
+
+                guestsToInsert.add(guest);
+            }
+        }
+
+        if (!guestsToInsert.isEmpty()) {
+            insert guestsToInsert;
+        }
+    }
+}
